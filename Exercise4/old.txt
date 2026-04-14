@@ -1,0 +1,95 @@
+THEORY Ex4Q3
+
+IMPORT-THEORY Equality
+IMPORT-THEORY Boolean
+IMPORT-THEORY Arithmetic
+IMPORT-THEORY List
+IMPORT-HASKELL List
+IMPORT-HASKELL Ex4
+
+THEOREM ex4q3
+    amort2ise xs == 6 + 13*(len xs) + sum xs
+
+STRATEGY Induction xs :: [Int]
+
+    BASE []
+        amort2ise [] == 6 + 13*(len []) + sum []
+    
+    STRATEGY ReduceAll
+        amort2ise [] == 6 + 13*(len []) + sum []
+        = DEF amort2ise.1
+        6 == 6 + 13*(len []) + sum []
+        = DEF len.1 @ len
+        6 == 6 + 13*(0) + sum []
+        = DEF sum.1 @ sum
+        6 == 6 + 13*(0) + 0
+        = LAW mul_right_zero l2r @ *
+        6 == 6 + 0 + 0
+        = LAW add_right_unit l2r @ + 2
+        6 == 6 + 0
+        = LAW add_right_unit l2r @ +
+        6 == 6
+        = LAW eq_refl
+        True
+
+    END ReduceAll
+
+    END BASE
+
+    STEP (x:xs)
+
+    ASSUME
+      amort2ise xs == 6 + 13*(len xs) + sum xs
+
+    SHOW
+      amort2ise (x:xs) == 6 + 13*(len (x:xs)) + sum (x:xs)
+
+    STRATEGY ReduceAll
+      
+        amort2ise (x:xs) == 6 + 13*(len (x:xs)) + sum (x:xs)
+        = DEF amort2ise.2
+        x + 13 + amort2ise xs == 6 + 13*(len (x:xs)) + sum (x:xs)
+        = DEF len.2 @ len 1
+        x + 13 + amort2ise xs == 6 + 13*(1 + len xs) + sum (x:xs)
+        = DEF sum.2 @ sum 
+        x + 13 + amort2ise xs == 6 + 13*(1 + len xs) + (x + sum xs)
+        = INDHYP l2r @ amort2ise
+        x + 13 + (6 + 13*(len xs) + sum xs) == 6 + 13*(1 + len xs) + (x + sum xs)          
+        = LAW mul_add_left_distr l2r @ * 2
+        x + 13 + (6 + 13*(len xs) + sum xs) == 6 + (13 * 1 + 13 * len xs) + (x + sum xs)
+        = LAW mul_right_unit l2r @ * 2
+        x + 13 + (6 + 13*(len xs) + sum xs) == 6 + (13 + 13 * len xs) + (x + sum xs)
+
+
+
+        
+        = LAW add_assoc l2r @ + 5
+        x + 13 + (6 + 13*(len xs) + sum xs) == ((6 + 13) + 13 * len xs) + (x + sum xs)
+        = LAW add_assoc l2r @ + 7
+        x + 13 + (6 + 13*(len xs) + sum xs) == ((((6 + 13) + 13 * len xs) + x) + sum xs)
+        = LAW add_symm l2r @ + 7
+        x + 13 + (6 + 13*(len xs) + sum xs) == ((x + ((6 + 13) + 13 * len xs)) + sum xs)
+        = LAW add_symm l2r @ + 6 
+        x + 13 + (6 + 13*(len xs) + sum xs) == ((x + ((13 + 6) + 13 * len xs)) + sum xs)
+        = LAW add_assoc l2r @ + 4
+        (x + 13 + (6 + 13*(len xs)) + sum xs) == ((x + ((13 + 6) + 13 * len xs)) + sum xs)
+
+
+
+
+
+
+        = LAW add_assoc r2l @ + 3
+        x + 13 + ((6 + 13*(len xs)) + sum xs) == ((x + ((13 + 6) + 13 * len xs)) + sum xs)
+
+        = LAW eq_refl
+        True
+
+
+    END ReduceAll
+
+    END STEP
+
+END Induction
+
+QED ex4q3

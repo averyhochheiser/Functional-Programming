@@ -1,0 +1,50 @@
+THEORY Ex4Q2
+IMPORT-THEORY Equality
+IMPORT-THEORY Boolean
+IMPORT-THEORY Arithmetic
+IMPORT-THEORY List
+IMPORT-HASKELL List
+IMPORT-HASKELL Ex4
+
+THEOREM ex4q2
+
+   funcrec5urs 648 == 279936
+
+STRATEGY ReduceLHS
+
+  funcrec5urs 648
+
+  = DEF funcrec5urs
+  if 648 <= 8 then 6 else 648 * funcrec5urs (648 `div` 9)
+
+  = SIMP
+  if False then 6 else 648 * funcrec5urs 72
+
+  = IF 2
+  648 * funcrec5urs 72
+
+  = DEF funcrec5urs
+  648 * if 72 <= 8 then 6 else 72 * funcrec5urs (72 `div` 9)
+
+  = SIMP
+  648 * if False then 6 else 72 * funcrec5urs 8
+
+  = IF 2
+  648 * (72 * funcrec5urs 8)
+
+  = DEF funcrec5urs
+  648 * (72 * if 8 <= 8 then 6 else 8 * funcrec5urs (8 `div` 9))
+
+  = SIMP
+  648 * (72 * if True then 6 else 8 * funcrec5urs 0)
+
+  = IF 1
+  648 * (72 * 6)
+  
+  = SIMP
+  279936
+
+END ReduceLHS
+
+QED ex4q2
+

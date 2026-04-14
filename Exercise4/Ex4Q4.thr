@@ -1,0 +1,360 @@
+THEORY Ex4Q4
+IMPORT-THEORY Equality
+IMPORT-THEORY Boolean
+IMPORT-THEORY Arithmetic
+IMPORT-THEORY List
+IMPORT-HASKELL List
+IMPORT-HASKELL Ex4
+
+THEOREM ex4q4
+
+   d7oubling (x+1) > d7oubling x
+
+STRATEGY CaseSplit Plus1Order
+
+  CASE 1  (x <  9)
+
+    SHOW 
+      d7oubling (x+1) > d7oubling x
+
+    STRATEGY ReduceAll
+
+      d7oubling (x+1) > d7oubling x
+    = DEF d7oubling
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 -> 2*(x + 1)-1) > d7oubling x
+    = LAW lt_minus_1 r2l @ guarded-if 1
+      (case "guarded-if" of
+      _ | (x + 1) - 1 < 10 - 1  -> 2*(x + 1)
+        | (x + 1) >= 10 -> 2*(x + 1)-1) > d7oubling x
+    = SIMP
+      (case "guarded-if" of
+      _ | (x + 1) - 1 < 9 -> 2*(x + 1)
+        | (x + 1) >= 10 -> 2*(x + 1)-1) > d7oubling x
+    = LAW add_sub_assoc2 l2r @ - 1
+      (case "guarded-if" of
+      _ | x - (1 - 1) < 9 -> 2*(x + 1)
+        | (x + 1) >= 10 -> 2*(x + 1)-1) > d7oubling x
+    = LAW sub_zero l2r @ - 2
+      (case "guarded-if" of
+      _ | x - 0 < 9 -> 2*(x + 1)
+        | (x + 1) >= 10 -> 2*(x + 1)-1) > d7oubling x   
+    = LAW sub_right_unit l2r @ - 1
+      (case "guarded-if" of
+      _ | x < 9 -> 2*(x + 1)
+        | (x + 1) >= 10 -> 2*(x + 1)-1) > d7oubling x  
+    = CASEP Plus1Order 1 @ guarded-if 1
+      (case "guarded-if" of
+      _ | True -> 2*(x + 1)
+        | (x + 1) >= 10 -> 2*(x + 1)-1) > d7oubling x  
+    = GRDIF 1
+      2*(x + 1) > d7oubling x  
+    = DEF d7oubling
+      2*(x + 1) > (case "guarded-if" of 
+                  _ | x < 10  -> 2*x
+                    | x >= 10 -> 2*x-1)
+    = LAW lt_widen l2r @ guarded-if 1
+      2*(x + 1) > (case "guarded-if" of 
+                  _ | x < 10 || x < 10 - 1 -> 2*x
+                    | x >= 10 -> 2*x-1)
+    = SIMP
+      2*(x + 1) > (case "guarded-if" of 
+                  _ | (x < 10 || x < 9) -> 2*x
+                    | x >= 10 -> 2*x-1)
+    = CASEP Plus1Order 1 @ < 2
+      2*(x + 1) > (case "guarded-if" of 
+                  _ | x < 10 || True -> 2*x
+                    | x >= 10 -> 2*x-1)
+    = LAW or_right_zero l2r @ guarded-if 1
+      2*(x + 1) > (case "guarded-if" of 
+                  _ | True -> 2*x
+                    | x >= 10 -> 2*x-1)
+    = GRDIF 1
+      2*(x + 1) > 2*x
+    = LAW mul_add_left_distr l2r @ * 1
+      2*x + 2*1 > 2*x
+    = SIMP
+      2*x + 2 > 2*x
+    = LAW nat_add_order_2
+    True
+
+    END ReduceAll
+
+  END CASE 1
+
+  CASE 2  (x == 9)
+
+    SHOW 
+      d7oubling (x+1) > d7oubling x
+
+    STRATEGY ReduceAll
+      d7oubling (x+1) > d7oubling x
+    = DEF d7oubling
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 -> 2*(x + 1)-1) > d7oubling x
+    = LAW ge_minus_1 r2l @ guarded-if 2
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1)-1 >= 10-1 -> 2*(x + 1)-1) > d7oubling x
+    = SIMP
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1)-1 >= 9 -> 2*(x + 1)-1) > d7oubling x
+    = LAW add_sub_assoc2 l2r @ - 1
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | x - (1 - 1) >= 9 -> 2*(x + 1)-1) > d7oubling x
+    = LAW sub_zero l2r @ - 2
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | x - 0 >= 9 -> 2*(x + 1)-1) > d7oubling x
+    = LAW sub_right_unit l2r @ - 1
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | x >= 9 -> 2*(x + 1)-1) > d7oubling x    
+    = LAW gt_def l2r @ >= 1
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x > 9 || x == 9) -> 2*(x + 1)-1) > d7oubling x      
+    = CASEP Plus1Order 2 @ == 1
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x > 9 || True) -> 2*(x + 1)-1) > d7oubling x 
+    = LAW or_right_zero l2r @ guarded-if 2
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | True -> 2*(x + 1)-1) > d7oubling x 
+    = GRDIF 2
+    2*(x + 1)-1 > d7oubling x
+    = DEF d7oubling
+    2*(x + 1)-1 > (case "guarded-if" of 
+                  _ | x < 10  -> 2*x
+                    | x >= 10 -> 2*x-1)
+    = LAW lt_eq_widen l2r @ guarded-if 1
+    2*(x + 1)-1 > (case "guarded-if" of 
+                  _ | x == 10 - 1 || x < 10 - 1 -> 2*x
+                    | x >= 10 -> 2*x-1)
+    = SIMP
+    2*(x + 1)-1 > (case "guarded-if" of 
+                  _ | x == 9 || x < 9 -> 2*x
+                    | x >= 10 -> 2*x-1)
+    = CASEP Plus1Order 2 @ == 1
+    2*(x + 1)-1 > (case "guarded-if" of 
+                  _ | True || x < 9 -> 2*x
+                    | x >= 10 -> 2*x-1)
+    = LAW or_left_zero l2r @ guarded-if 1
+    2*(x + 1)-1 > (case "guarded-if" of 
+                  _ | True -> 2*x
+                    | x >= 10 -> 2*x-1)
+    = GRDIF 1
+      2*(x + 1)-1 > 2*x
+    = LAW mul_add_left_distr l2r @ * 1
+      (2*x + 2*1) - 1 > 2*x
+    = LAW mul_right_unit l2r @ * 2
+      (2*x + 2) - 1 > 2*x
+    = LAW add_sub_assoc2 l2r @ - 1
+      2*x - (1 - 2) > 2*x
+    = SIMP
+      2*x - (-1) > 2*x
+    = LAW gt_minus_1 r2l @ > 1
+      (2*x - (-1)) - 1 > 2*x - 1
+    = LAW sub_add_assoc r2l @ - 2
+      2*x - ((-1) + 1) > 2*x - 1
+    = SIMP
+      2*x - 0 > 2*x - 1
+    = LAW sub_right_unit l2r @ - 1
+      2*x > 2*x - 1
+    = LAW gt_p1_to_m1 r2l @ > 1
+      2*x + 1 > 2*x
+    = LAW nat_add_order_1 @ > 1
+      True
+
+    END ReduceAll
+
+  END CASE 2
+
+  CASE 3  (x == 10)
+
+    SHOW 
+      d7oubling (x+1) > d7oubling x
+
+    STRATEGY ReduceAll
+    d7oubling (x+1) > d7oubling x
+    = DEF d7oubling
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 -> 2*(x + 1)-1) > d7oubling x
+    = LAW ge_widen l2r @ guarded-if 2
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || (x + 1) >= 10 + 1-> 2*(x + 1)-1) > d7oubling x
+    = SIMP
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || (x + 1) >= 11 -> 2*(x + 1)-1) > d7oubling x
+    = LAW gt_def l2r @ >= 2
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || ((x + 1) > 11 || (x + 1) == 11) -> 2*(x + 1)-1) > d7oubling x
+    = LAW eq_minus_1 r2l @ == 1
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || ((x + 1) > 11 || (x + 1) - 1 == 11 - 1) -> 2*(x + 1)-1) > d7oubling x
+    = SIMP
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || ((x + 1) > 11 || (x + 1) - 1 == 10) -> 2*(x + 1)-1) > d7oubling x
+    = LAW add_sub_assoc2 l2r @ - 1
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || ((x + 1) > 11 || x - (1 - 1) == 10) -> 2*(x + 1)-1) > d7oubling x
+    = LAW sub_zero l2r @ - 2
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || ((x + 1) > 11 || x - 0 == 10) -> 2*(x + 1)-1) > d7oubling x
+    = LAW sub_right_unit l2r @ - 1
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || ((x + 1) > 11 || x == 10) -> 2*(x + 1)-1) > d7oubling x
+    = CASEP Plus1Order 3 @ == 1
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || ((x + 1) > 11 || True) -> 2*(x + 1)-1) > d7oubling x
+    = LAW or_right_zero l2r @ || 2 
+    (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || True -> 2*(x + 1)-1) > d7oubling x
+    = LAW or_right_zero l2r @ guarded-if 2 
+    (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | True -> 2*(x + 1)-1) > d7oubling x
+    = GRDIF 2
+      2*(x + 1)-1 > d7oubling x
+    = DEF d7oubling
+      2*(x + 1)-1 > (case "guarded-if" of 
+                  _ | x < 10  -> 2*x
+                    | x >= 10 -> 2*x-1)
+    = LAW gt_def l2r @ >= 1
+      2*(x + 1)-1 > (case "guarded-if" of 
+                  _ | x < 10  -> 2*x
+                    | (x > 10 || x == 10) -> 2*x-1)
+    = CASEP Plus1Order 3 @ == 1
+      2*(x + 1)-1 > (case "guarded-if" of 
+                  _ | x < 10  -> 2*x
+                    | (x > 10 || True) -> 2*x-1)
+    = LAW or_right_zero l2r @ guarded-if 2
+      2*(x + 1)-1 > (case "guarded-if" of 
+                  _ | x < 10  -> 2*x
+                    | True -> 2*x-1)
+    = GRDIF 2
+      2*(x + 1)-1 > 2*x-1
+    = LAW gt_minus_1 l2r @ > 1
+      2*(x + 1) > 2*x
+    = LAW mul_add_left_distr l2r @ * 1
+      2*x + 2*1 > 2*x
+    = SIMP
+      2*x + 2 > 2*x
+    = LAW nat_add_order_2
+    True
+
+    END ReduceAll
+
+  END CASE 3
+
+  CASE 4  (x >  10)
+
+    SHOW 
+      d7oubling (x+1) > d7oubling x
+
+    STRATEGY ReduceAll
+      d7oubling (x+1) > d7oubling x
+    = DEF d7oubling
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 -> 2*(x + 1)-1) > d7oubling x
+    = LAW ge_widen l2r @ guarded-if 2
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || (x + 1) >= 10 + 1-> 2*(x + 1)-1) > d7oubling x
+    = SIMP
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || (x + 1) >= 11 -> 2*(x + 1)-1) > d7oubling x
+    = LAW gt_def l2r @ >= 2
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || (x + 1 > 11 || x + 1 == 11) -> 2*(x + 1)-1) > d7oubling x
+    = LAW gt_p1_to_m1 l2r @ > 1
+      (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || (x > (11 - 1) || x + 1 == 11) -> 2*(x + 1)-1) > d7oubling x
+    = SIMP
+    (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || (x > 10 || x + 1 == 11) -> 2*(x + 1)-1) > d7oubling x
+    = CASEP Plus1Order 4 @ > 1
+    (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || (True || x + 1 == 11) -> 2*(x + 1)-1) > d7oubling x
+    = LAW or_left_zero l2r @ || 2
+    (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | (x + 1) >= 10 || True -> 2*(x + 1)-1) > d7oubling x
+    = LAW or_right_zero l2r @ || 1
+    (case "guarded-if" of 
+      _ | (x + 1) < 10  -> 2*(x + 1)
+        | True -> 2*(x + 1)-1) > d7oubling x
+    = GRDIF 2
+      2*(x + 1)-1 > d7oubling x
+    = DEF d7oubling
+    2*(x + 1)-1 > (case "guarded-if" of 
+                  _ | x < 10  -> 2*x
+                    | x >= 10 -> 2*x-1)
+    = LAW gt_def l2r @ >= 1
+      2*(x + 1)-1 > (case "guarded-if" of 
+                  _ | x < 10  -> 2*x
+                    | (x > 10 || x == 10) -> 2*x-1)
+    = CASEP Plus1Order 3 @ == 1
+      2*(x + 1)-1 > (case "guarded-if" of 
+                  _ | x < 10  -> 2*x
+                    | (x > 10 || True) -> 2*x-1)
+    = LAW or_right_zero l2r @ guarded-if 2
+      2*(x + 1)-1 > (case "guarded-if" of 
+                  _ | x < 10  -> 2*x
+                    | True -> 2*x-1)
+    = GRDIF 2
+      2*(x + 1)-1 > 2*x-1
+    = LAW gt_minus_1 l2r @ > 1
+      2*(x + 1) > 2*x
+    = LAW mul_add_left_distr l2r @ * 1
+      2*x + 2*1 > 2*x
+    = SIMP
+      2*x + 2 > 2*x
+    = LAW nat_add_order_2
+    True
+
+
+
+
+    END ReduceAll
+
+  END CASE 4
+  
+END CaseSplit
+
+QED ex4q4
+
+CASE-SCHEME Plus1Order
+CASE 1  (x <  9)
+CASE 2  (x == 9)
+CASE 3  (x == 10)
+CASE 4  (x >  10)
+EXHAUSTIVE (x <  9) || (x == 9) || (x == 10) || (x >  10)
+EXCLUSIVE 1 2  not((x <  9) && (x == 9))
+EXCLUSIVE 1 3  not((x <  9) && (x == 10))
+EXCLUSIVE 1 4  not((x <  9) && (x >  10))
+EXCLUSIVE 2 3  not((x == 9) && (x == 10))
+EXCLUSIVE 2 4  not((x == 9) && (x >  10))
+EXCLUSIVE 3 4  not((x == 10) && (x >  10))

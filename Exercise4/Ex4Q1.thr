@@ -1,0 +1,47 @@
+THEORY Ex4Q1
+IMPORT-THEORY Equality
+IMPORT-THEORY Boolean
+IMPORT-THEORY Arithmetic
+IMPORT-THEORY List
+IMPORT-HASKELL List
+IMPORT-HASKELL Ex4
+
+THEOREM ex4q1
+
+   (1 * (x - (y - z))) + (0 * 1) == (0 + 0) + (0 + ((z + x) - y))
+
+STRATEGY ReduceAll
+
+  (1 * (x - (y - z))) + (0 * 1) == (0 + 0) + (0 + ((z + x) - y))
+
+  = LAW mul_left_unit l2r @ * 1
+  (x - (y - z)) + (0 * 1) == (0 + 0) + (0 + ((z + x) - y))
+
+  = LAW mul_left_zero l2r @ * 1
+  (x - (y - z)) + 0 == (0 + 0) + (0 + ((z + x) - y))
+
+  = LAW add_right_unit l2r @ + 1
+  (x - (y - z)) == (0 + 0) + (0 + ((z + x) - y))
+
+  = LAW add_sub_assoc2 r2l @ -
+  (x + z) - y == (0 + 0) + (0 + ((z + x) - y))
+
+  = LAW add_left_unit l2r @ + 2
+  (x + z) - y == 0 + (0 + ((z + x) - y))
+
+  = LAW add_left_unit l2r @ + 2
+  (x + z) - y == (0 + ((z + x) - y))
+
+  = LAW add_left_unit l2r @ + 2
+  (x + z) - y == (z + x) - y
+
+  = LAW add_symm l2r @ + 2
+  (x + z) - y == (x + z) - y
+
+  = LAW eq_refl
+  True
+
+END ReduceAll
+
+QED ex4q1
+
